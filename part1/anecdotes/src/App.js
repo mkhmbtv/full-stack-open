@@ -34,8 +34,9 @@ const App = () => {
   const handleSelectedClick = () => setSelected(getRandomInt(0, anecdotes.length));
   
   const handleVotesClick = () => {
-    votes[selected] += 1;
-    setVotes([...votes]);
+    const newVotes = [...votes];
+    newVotes[selected] += 1;
+    setVotes(newVotes);
   };
 
   return (
