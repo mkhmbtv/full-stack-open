@@ -4,17 +4,17 @@ const Header = (props) => (
   <h1>{props.name}</h1>
 );
 
-const Content = (props) => {
-  return props.parts.map(part => {
+const Content = (props) => (
+  props.parts.map((part, i) => {
     return (
-      <p>{part.name} {part.exercises}</p>
+      <p key={i}>{part.name} {part.exercises}</p>
     );
-  });  
-};
+  })
+);
 
 const Total = (props) => {
   const total = props.parts.reduce((sum, part) => {
-    sum += part.exercises;
+    return sum += part.exercises;
   }, 0);
 
   return (
