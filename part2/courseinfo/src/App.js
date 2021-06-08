@@ -1,34 +1,6 @@
 import React from 'react';
+import Course from './components/Course'
 
-const Header = ({ name }) => (
-  <h1>{name}</h1>
-);
-
-const Content = (props) => (
-  <p>{props.name} {props.exercises}</p>
-);
-
-const Total = (props) => {
-  const total = props.parts.reduce((sum, part) => {
-    return sum += part.exercises;
-  }, 0);
-
-  return (
-    <p><b>total of {total} exercises </b></p>
-  );
-};
-
-const Course = ({ course }) => {
-  return (
-    <div>
-      <Header name={course.name} />
-      {course.parts.map(part =>
-        <Content key={part.id} name={part.name} exercises={part.exercises} />
-      )}
-      <Total parts={course.parts} />
-    </div>
-  );
-};
 
 const App = () => {
   const courses = [
@@ -74,11 +46,12 @@ const App = () => {
         }
       ]
     }
-];
+  ];
 
 
   return (
     <div>
+      <h1>Web development curriculum</h1>
       {courses.map(course => 
         <Course key={course.id} course={course} />
       )}
