@@ -8,7 +8,11 @@ const App = () => {
 
   const addPerson = (event) => {
     event.preventDefault();
-    setPersons(persons.concat({ name: newName }));
+    if (persons.find(person => person.name === newName)) {
+      return alert(`${newName} is already added to phonebook`);
+    }
+    
+    setPersons(persons.concat({name: newName}));
     setNewName('');
   }
 
@@ -17,12 +21,13 @@ const App = () => {
     setNewName(event.target.value);
   }
 
+
   return (
     <div>
       <h2>Phonebook</h2>
       <form onSubmit={addPerson}>
         <div>
-          name: <input value={newName} onChange={handlePersonChange}/>
+          name: <input value={newName} onChange={handlePersonChange} />
         </div>
         <div>
           <button type="submit">add</button>
