@@ -15,13 +15,18 @@ function App() {
       });
   });
 
-
   const handleSearchedChange = (event) => {
     setSearched(event.target.value);
   };
 
-  const filteredCountries = (
-    countries.filter(country => {
+  const handleClick = (country) => {
+    return () => setSearched(country);
+  };
+
+
+  const filteredCountries = (searched === ''
+    ? []
+    : countries.filter(country => {
       return country.name.toLowerCase().includes(searched.toLowerCase());
     })
   );
@@ -29,7 +34,7 @@ function App() {
   return (
     <div>
       <Filter value={searched} handleChange={handleSearchedChange} />
-      <Countries countries={filteredCountries} />
+      <Countries countries={filteredCountries} handleClick={handleClick}/>
     </div>
   );
 }

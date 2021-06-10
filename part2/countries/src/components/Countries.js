@@ -1,31 +1,38 @@
 import React from 'react';
 
-const Countries = ({ countries }) => {
-    if (countries.length === 1) {
-        const country = countries[0];
-        return (
+const Country = ({ country }) => {
+    return (
+        <div>
+            <h2>{country.name}</h2>
             <div>
-                <h2>{country.name}</h2>
-                <div>
-                    <p>capital {country.capital}</p>
-                    <p>population {country.population}</p>
-                </div>
-                <h3>languages</h3>
-                <div>
-                    <ul>
-                        {country.languages.map(lang =>
-                            <li key={lang.name}>{lang.name}</li>
-                        )}
-                    </ul>
-                </div>
-                <img src={country.flag} alt='flag' width='100' height='100' />
+                <p>capital {country.capital}</p>
+                <p>population {country.population}</p>
             </div>
-        );
+            <h3>languages</h3>
+            <div>
+                <ul>
+                    {country.languages.map(lang =>
+                        <li key={lang.name}>{lang.name}</li>
+                    )}
+                </ul>
+            </div>
+            <img src={country.flag} alt='flag' width='100' height='100' />
+        </div>
+    );
+};
+
+
+const Countries = ({ countries, handleClick }) => {
+    if (countries.length === 1) {
+        return <Country country={countries[0]} />
     } else if (countries.length <= 10) {
         return (
             <div>
                 {countries.map(country =>
-                    <p key={country.name}>{country.name}</p>
+                    <div key={country.name}>
+                        {country.name}
+                       <button onClick={handleClick(country.name)}>show</button>
+                    </div>
                 )}
             </div>
         );
@@ -35,5 +42,6 @@ const Countries = ({ countries }) => {
         );
     }
 };
+
 
 export default Countries;
