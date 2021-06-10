@@ -1,4 +1,5 @@
 import React from 'react';
+import Weather from './Weather';
 
 const Country = ({ country }) => {
     return (
@@ -17,10 +18,10 @@ const Country = ({ country }) => {
                 </ul>
             </div>
             <img src={country.flag} alt='flag' width='100' height='100' />
+            <Weather capital={country.capital} />
         </div>
     );
 };
-
 
 const Countries = ({ countries, handleClick }) => {
     if (countries.length === 1) {
@@ -42,6 +43,5 @@ const Countries = ({ countries, handleClick }) => {
         );
     }
 };
-
 
 export default Countries;

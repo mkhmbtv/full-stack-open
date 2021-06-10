@@ -13,7 +13,7 @@ function App() {
       .then(promise => {
         setCountries(promise.data);
       });
-  });
+  }, []);
 
   const handleSearchedChange = (event) => {
     setSearched(event.target.value);
@@ -22,7 +22,6 @@ function App() {
   const handleClick = (country) => {
     return () => setSearched(country);
   };
-
 
   const filteredCountries = (searched === ''
     ? []
