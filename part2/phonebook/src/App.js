@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import Filter from './components/Filter';
 import PersonForm from './components/PersonForm';
 import Persons from './components/Persons';
+import Notification from './components/Notification';
 import personService from './services/persons';
 
 const App = () => {
@@ -9,6 +10,8 @@ const App = () => {
   const [newName, setNewName] = useState('');
   const [newNumber, setNewNumber] = useState('');
   const [searched, setSearched] = useState('');
+  const [message, setMessage] = useState(null);
+  const [isError, setIsError] = useState(false);
 
   useEffect(() => {
     personService
@@ -37,6 +40,11 @@ const App = () => {
     personService
       .create(newPerson)
       .then(returnedPerson => {
+        setMessage(`Added ${returnedPerson.name}`);
+        setTimeout(() => {
+          setMessage(null);
+        }, 5000);
+
         setPersons(persons.concat(returnedPerson));
         setNewName('');
         setNewNumber('');
@@ -50,13 +58,23 @@ const App = () => {
     if (window.confirm(`${person.name} is already added to phonebook, replace the old number with a new one?`)) {
         personService
           .update(id, changedPerson)
-          .then(returnedPerson => {
+          .then(returnedPerson => {      
+            setMessage(`Changed ${returnedPerson.name}'s number`);
+            setTimeout(() => {
+              setMessage(null);
+            }, 5000);
+
             setPersons(persons.map(person => person.id !== id ? person : returnedPerson));
             setNewName('');
             setNewNumber('');
           })
           .catch(error => {
-            alert(`${person.name} was already deleted from server`);
+            setIsError(true);
+            setMessage(`${person.name} was already deleted from server`);
+            setTimeout(() => {
+              setMessage(null);
+              setIsError(false);
+            }, 5000);
             setPersons(persons.filter(p => p.id !== id));
           })
     }
@@ -68,11 +86,16 @@ const App = () => {
     if (window.confirm(`Delete ${person.name}`)) {
       personService
         .remove(id)
-        .then(() => {
+        .then((response) => {
           setPersons(persons.filter(p => p.id !== id));
         })
         .catch(error => {
-          alert(`${person.name} was already deleted from server`);
+          setIsError(true);
+          setMessage(`${person.name} was already deleted from server`);
+          setTimeout(() => {
+            setMessage(null);
+            setIsError(false);
+          }, 5000);
           setPersons(persons.filter(p => p.id !== id));
         })
     }
@@ -98,6 +121,7 @@ const App = () => {
   return (
     <div>
       <h2>Phonebook</h2>
+      <Notification message={message} isError={isError}/>
       <Filter value={searched} handleChange={handleSearchedChange} />
       <h2>add a new</h2>
       <PersonForm addPerson={addPerson} 
