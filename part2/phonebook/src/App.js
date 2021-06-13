@@ -4,7 +4,6 @@ import PersonForm from './components/PersonForm';
 import Persons from './components/Persons';
 import personService from './services/persons';
 
-
 const App = () => {
   const [persons, setPersons] = useState([]);
   const [newName, setNewName] = useState('');
@@ -21,9 +20,15 @@ const App = () => {
 
   const addPerson = (event) => {
     event.preventDefault();
-    if (persons.find(person => person.name === newName)) {
+    const exactMatchPerson = persons.find(p => p.name === newName && p.number === newNumber);
+    const nameMatchPerson = persons.find(p => p.name === newName && p.number !== newNumber);
+    
+    if (exactMatchPerson) {
       return alert(`${newName} is already added to phonebook`);
+    } else if (nameMatchPerson) {
+      return updateNumber(nameMatchPerson.id);
     }
+
     const newPerson = {
       name: newName,
       number: newNumber
@@ -38,6 +43,25 @@ const App = () => {
       })
   };
 
+  const updateNumber = id => {
+    const person = persons.find(p => p.id === id);
+    const changedPerson = {...person, number: newNumber};
+
+    if (window.confirm(`${person.name} is already added to phonebook, replace the old number with a new one?`)) {
+        personService
+          .update(id, changedPerson)
+          .then(returnedPerson => {
+            setPersons(persons.map(person => person.id !== id ? person : returnedPerson));
+            setNewName('');
+            setNewNumber('');
+          })
+          .catch(error => {
+            alert(`${person.name} was already deleted from server`);
+            setPersons(persons.filter(p => p.id !== id));
+          })
+    }
+  }
+
   const deletePerson = id => {
     const person = persons.find(p => p.id === id);
 
@@ -45,6 +69,10 @@ const App = () => {
       personService
         .remove(id)
         .then(() => {
+          setPersons(persons.filter(p => p.id !== id));
+        })
+        .catch(error => {
+          alert(`${person.name} was already deleted from server`);
           setPersons(persons.filter(p => p.id !== id));
         })
     }
