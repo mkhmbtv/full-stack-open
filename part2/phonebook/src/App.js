@@ -11,7 +11,6 @@ const App = () => {
   const [newNumber, setNewNumber] = useState('');
   const [searched, setSearched] = useState('');
   const [message, setMessage] = useState(null);
-  const [isError, setIsError] = useState(false);
 
   useEffect(() => {
     personService
@@ -23,32 +22,28 @@ const App = () => {
 
   const addPerson = (event) => {
     event.preventDefault();
-    const exactMatchPerson = persons.find(p => p.name === newName && p.number === newNumber);
-    const nameMatchPerson = persons.find(p => p.name === newName && p.number !== newNumber);
+    const alreadyExists = persons.find(p => p.name === newName);
     
-    if (exactMatchPerson) {
-      return alert(`${newName} is already added to phonebook`);
-    } else if (nameMatchPerson) {
-      return updateNumber(nameMatchPerson.id);
+    if (alreadyExists) {
+      updateNumber(alreadyExists.id)
+    } else {
+      const newPerson = {
+        name: newName,
+        number: newNumber
+      };
+
+      personService
+        .create(newPerson)
+        .then(returnedPerson => {
+          handleMessage(`Added ${returnedPerson.name}`);
+          setPersons(persons.concat(returnedPerson));
+          setNewName('');
+          setNewNumber('');
+        })
+        .catch(error => {
+          handleMessage(`${error.response.data.error}`, true);
+        })
     }
-
-    const newPerson = {
-      name: newName,
-      number: newNumber
-    };
-    
-    personService
-      .create(newPerson)
-      .then(returnedPerson => {
-        setMessage(`Added ${returnedPerson.name}`);
-        setTimeout(() => {
-          setMessage(null);
-        }, 5000);
-
-        setPersons(persons.concat(returnedPerson));
-        setNewName('');
-        setNewNumber('');
-      })
   };
 
   const updateNumber = id => {
@@ -59,23 +54,13 @@ const App = () => {
         personService
           .update(id, changedPerson)
           .then(returnedPerson => {      
-            setMessage(`Changed ${returnedPerson.name}'s number`);
-            setTimeout(() => {
-              setMessage(null);
-            }, 5000);
-
+            handleMessage(`Changed ${returnedPerson.name}'s number`);
             setPersons(persons.map(person => person.id !== id ? person : returnedPerson));
             setNewName('');
             setNewNumber('');
           })
           .catch(error => {
-            setIsError(true);
-            setMessage(`${person.name} was already deleted from server`);
-            setTimeout(() => {
-              setMessage(null);
-              setIsError(false);
-            }, 5000);
-            setPersons(persons.filter(p => p.id !== id));
+            handleMessage(`${error.response.data.error}`, true);
           })
     }
   }
@@ -87,19 +72,26 @@ const App = () => {
       personService
         .remove(id)
         .then((response) => {
+          handleMessage(`Deleted ${person.name}`);
           setPersons(persons.filter(p => p.id !== id));
         })
         .catch(error => {
-          setIsError(true);
-          setMessage(`${person.name} was already deleted from server`);
-          setTimeout(() => {
-            setMessage(null);
-            setIsError(false);
-          }, 5000);
+          handleMessage(`Information of ${person.name} has already been removed from server`, true);
           setPersons(persons.filter(p => p.id !== id));
         })
     }
   };
+
+  const handleMessage = (message, isError = false) => {
+    setMessage({
+      message: message,
+      error: isError
+    });
+
+    setTimeout(() => {
+      setMessage(null)
+    }, 5000);
+  }
 
   const handleNameChange = (event) => {
     setNewName(event.target.value);
@@ -121,7 +113,7 @@ const App = () => {
   return (
     <div>
       <h2>Phonebook</h2>
-      <Notification message={message} isError={isError}/>
+      <Notification message={message} />
       <Filter value={searched} handleChange={handleSearchedChange} />
       <h2>add a new</h2>
       <PersonForm addPerson={addPerson} 
