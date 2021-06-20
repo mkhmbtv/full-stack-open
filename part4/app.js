@@ -12,14 +12,14 @@ logger.info('connecting to', config.MONGODB_URI)
 
 mongoose.connect(config.MONGODB_URI, { useNewUrlParser: true, useUnifiedTopology: true, useFindAndModify: false, useCreateIndex: true })
   .then(() => {
-      logger.info('connected to MongoDB')
+    logger.info('connected to MongoDB')
   })
   .catch(error => {
-      logger.error('error connecting to MongoDB:', error.message)
+    logger.error('error connecting to MongoDB:', error.message)
   })
 
 morgan.token('body', (req) => {
-    return JSON.stringify(req.body)
+  return JSON.stringify(req.body)
 })
 
 app.use(cors())
