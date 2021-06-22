@@ -33,6 +33,11 @@ test('a specific blog is within the returned blogs', async () => {
   expect(titles).toContain('First class tests')
 })
 
+test('blog has id property', async () => {
+  const blogs = await helper.blogsInDb()
+  expect(blogs[0].id).toBeDefined()
+})
+
 afterAll(() => {
   mongoose.connection.close()
 })
