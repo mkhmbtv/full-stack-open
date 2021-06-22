@@ -4,7 +4,6 @@ const app = require('../app')
 const api = supertest(app)
 const helper = require('./test_helper')
 const Blog = require('../models/blog')
-const { result } = require('lodash')
 
 beforeEach(async () => {
   await Blog.deleteMany()
@@ -60,7 +59,7 @@ test('a valid blog can be added', async () => {
   expect(titles).toContain('Type wars')
 })
 
-test('likes property will default to 0 if not specified in the request', async () => {
+test('likes property of a blog defaults to zero if not specified in the post request', async () => {
   const newBlog = {
     title: 'Type wars',
     author: 'Robert C. Martin',
@@ -74,6 +73,53 @@ test('likes property will default to 0 if not specified in the request', async (
     .expect('Content-Type', /application\/json/)
 
   expect(resultBlog.body.likes).toBe(0)
+})
+
+test('blog without title and url is not added', async () => {
+  const newBlog = {
+    author: 'Robert C. Martin',
+    likes: 2,
+  }
+
+  await api
+    .post('/api/blogs')
+    .send(newBlog)
+    .expect(400)
+
+  const blogsAtEnd = await helper.blogsInDb()
+  expect(blogsAtEnd).toHaveLength(helper.initialBlogs.length)
+})
+
+test('blog without title is not added', async () => {
+  const newBlog = {
+    author: 'Robert C. Martin',
+    url: 'http://blog.cleancoder.com/uncle-bob/2016/05/01/TypeWars.html',
+    likes: 2,
+  }
+
+  await api
+    .post('/api/blogs')
+    .send(newBlog)
+    .expect(400)
+
+  const blogsAtEnd = await helper.blogsInDb()
+  expect(blogsAtEnd).toHaveLength(helper.initialBlogs.length)
+})
+
+test('blog without url is not added', async () => {
+  const newBlog = {
+    title: 'Type wars',
+    author: 'Robert C. Martin',
+    likes: 2,
+  }
+
+  await api
+    .post('/api/blogs')
+    .send(newBlog)
+    .expect(400)
+
+  const blogsAtEnd = await helper.blogsInDb()
+  expect(blogsAtEnd).toHaveLength(helper.initialBlogs.length)
 })
 
 afterAll(() => {
