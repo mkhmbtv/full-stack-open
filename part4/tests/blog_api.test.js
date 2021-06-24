@@ -6,7 +6,7 @@ const helper = require('./test_helper')
 const Blog = require('../models/blog')
 
 beforeEach(async () => {
-  await Blog.deleteMany()
+  await Blog.deleteMany({})
 
   await Blog.insertMany(helper.initialBlogs)
 })
