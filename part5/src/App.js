@@ -1,10 +1,11 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 import Blog from './components/Blog'
 import BlogForm from './components/BlogForm'
 import LoginForm from './components/LoginForm'
 import blogService from './services/blogs'
 import loginService from './services/login'
 import Notification from './components/Notification'
+import Togglable from './components/Togglable'
 
 const App = () => {
   const [blogs, setBlogs] = useState([])
@@ -15,6 +16,8 @@ const App = () => {
   const [author, setAuthor] = useState('')
   const [url, setUrl] = useState('')
   const [notification, setNotification] = useState(null)
+
+  const blogFormRef = useRef()
 
   useEffect(() => {
     blogService.getAll().then(blogs =>
@@ -39,6 +42,7 @@ const App = () => {
       url: url,
     }
 
+    blogFormRef.current.toggleVisibility()
     try {
       const createdBlog = await blogService.create(blogObject)
       setBlogs(blogs.concat(createdBlog))
@@ -82,13 +86,27 @@ const App = () => {
     window.localStorage.removeItem('loggedBloglistappUser')
     setUser(null)
   }
+
+  const blogForm = () => (
+    <Togglable buttonLabel="create new blog" ref={blogFormRef}>
+      <BlogForm 
+        handleSubmit={addBlog}
+        title={title}
+        author={author}
+        url={url}
+        handleTitleChange={setTitle}
+        handleAuthorChange={setAuthor}
+        handleUrlChange={setUrl}
+      />
+    </Togglable>
+  )
    
   if (user === null) {
     return (
       <div>
         <Notification notification={notification} />
         <LoginForm
-          handleLogin={handleLogin}
+          handleSubmit={handleLogin}
           username={username} password={password}
           handleUsernameChange={setUsername} handlePasswordChange={setPassword}
         />
@@ -101,10 +119,7 @@ const App = () => {
       <Notification notification={notification} />
       {user.name} logged in
       <button type="submit" onClick={handleLogout}>logout</button>
-      <BlogForm addBlog={addBlog}
-        title={title} author={author} url={url}
-        handleTitleChange={setTitle} handleAuthorChange={setAuthor} handleUrlChange={setUrl}
-      />
+      {blogForm()}
       {blogs.map(blog =>
         <Blog key={blog.id} blog={blog} />
       )}
