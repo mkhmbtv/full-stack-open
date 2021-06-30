@@ -52,6 +52,17 @@ const App = () => {
     }
   }
 
+  const deleteBlog = async (id) => {
+    const toDelete = blogs.find(b => b.id === id)
+    try {
+      await blogService.remove(id)
+      setBlogs(blogs.filter(b => b.id !== id))
+      handleNotification(`Deleted ${toDelete.title} by ${toDelete.author}`)
+    } catch (exception) {
+      handleNotification(`${exception.response.data.error}`, 'error')
+    }
+  }
+
   const handleNotification = (message, type='success') => {
     setNotification({ message, type })
     setTimeout(() => {
@@ -111,7 +122,12 @@ const App = () => {
       <button type="submit" onClick={handleLogout}>logout</button>
       {blogForm()}
       {sortedBlogs.map(blog =>
-        <Blog key={blog.id} blog={blog} updateBlog={updateBlog}/>
+        <Blog 
+          key={blog.id} 
+          blog={blog} 
+          updateBlog={updateBlog}
+          deleteBlog={deleteBlog}
+        />
       )}
     </div>
   )
