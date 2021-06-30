@@ -12,9 +12,6 @@ const App = () => {
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
   const [user, setUser] = useState(null)
-  const [title, setTitle] = useState('')
-  const [author, setAuthor] = useState('')
-  const [url, setUrl] = useState('')
   const [notification, setNotification] = useState(null)
 
   const blogFormRef = useRef()
@@ -34,21 +31,11 @@ const App = () => {
     }
   }, [])
 
-  const addBlog = async (event) => {
-    event.preventDefault()
-    const blogObject = {
-      title: title,
-      author: author,
-      url: url,
-    }
-
+  const addBlog = async (blogObject) => {
     blogFormRef.current.toggleVisibility()
     try {
       const createdBlog = await blogService.create(blogObject)
       setBlogs(blogs.concat(createdBlog))
-      setTitle('')
-      setAuthor('')
-      setUrl('')
       handleNotification(`new blog ${createdBlog.title} by ${createdBlog.author} added`)
     } catch (exception) {
       handleNotification(`${exception.response.data.error}`, 'error')
@@ -89,15 +76,7 @@ const App = () => {
 
   const blogForm = () => (
     <Togglable buttonLabel="create new blog" ref={blogFormRef}>
-      <BlogForm 
-        handleSubmit={addBlog}
-        title={title}
-        author={author}
-        url={url}
-        handleTitleChange={setTitle}
-        handleAuthorChange={setAuthor}
-        handleUrlChange={setUrl}
-      />
+      <BlogForm createBlog={addBlog}/>
     </Togglable>
   )
    
