@@ -26,19 +26,23 @@ blogsRouter.post('/', userExtractor, async (request, response) => {
   const savedBlog = await blog.save()
   user.blogs = user.blogs.concat(savedBlog._id)
   await user.save()
+  await savedBlog.populate('user', { username: 1, name: 1 }).execPopulate()
 
   response.status(201).json(savedBlog)
 })
 
 blogsRouter.delete('/:id', userExtractor, async (request, response) => {
-  const user = request.user
-
+  const user = await User.findById(request.user.id)
   const blog = await Blog.findById(request.params.id)
+
   if (blog.user.toString() !== user.id.toString()) {
     return response.status(401).json({ error: 'sorry, you do not have the right to delete this blog' })
   }
 
   await blog.remove()
+  user.blogs = user.blogs.filter(b => b.id.toString() !== request.params.id.toString())
+  await user.save()
+
   response.status(204).end()
 })
 
@@ -52,7 +56,10 @@ blogsRouter.put('/:id', async (request, response) => {
     likes: body.likes
   }
 
-  const updatedBlog = await Blog.findByIdAndUpdate(request.params.id, blog, { new: true })
+  const updatedBlog = await Blog
+    .findByIdAndUpdate(request.params.id, blog, { new: true })
+    .populate('user', { username: 1, name: 1 })
+
   response.json(updatedBlog.toJSON())
 })
 
