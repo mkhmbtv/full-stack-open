@@ -32,7 +32,7 @@ const Blog = ({ blog, updateBlog, deleteBlog }) => {
     borderWidth: 1,
     marginBottom: 5
   }
-  
+
   return (
     <div style={blogStyle}>
       <div style={hideWhenVisible}>
@@ -43,7 +43,7 @@ const Blog = ({ blog, updateBlog, deleteBlog }) => {
         <div>
           {blog.title} {blog.author}
           <button onClick={toggleVisibility}>hide</button>
-        </div>  
+        </div>
         <div>
           {blog.url}
         </div>

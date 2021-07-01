@@ -19,7 +19,7 @@ const App = () => {
   useEffect(() => {
     blogService.getAll().then(blogs =>
       setBlogs( blogs )
-    )  
+    )
   }, [])
 
   useEffect(() => {
@@ -40,7 +40,7 @@ const App = () => {
     } catch (exception) {
       handleNotification(`${exception.response.data.error}`, 'error')
     }
-    
+
   }
 
   const updateBlog = async (id, blogObject) => {
@@ -101,7 +101,7 @@ const App = () => {
   )
 
   const sortedBlogs = blogs.sort((a, b) => b.likes - a.likes)
-   
+
   if (user === null) {
     return (
       <div>
@@ -114,6 +114,7 @@ const App = () => {
       </div>
     )
   }
+
   return (
     <div>
       <h2>blogs</h2>
@@ -122,9 +123,9 @@ const App = () => {
       <button type="submit" onClick={handleLogout}>logout</button>
       {blogForm()}
       {sortedBlogs.map(blog =>
-        <Blog 
-          key={blog.id} 
-          blog={blog} 
+        <Blog
+          key={blog.id}
+          blog={blog}
           updateBlog={updateBlog}
           deleteBlog={deleteBlog}
         />
