@@ -37,5 +37,21 @@ describe('Blog app', function() {
 
       cy.get('html').should('not.contain', 'Superuser logged in')
     })
+
+    describe('When logged in', function () {
+      beforeEach(function () {
+        cy.login({ username: 'root', password: 'testing' })
+      })
+
+      it('A blog can be created', function() {
+        cy.contains('create new blog').click()
+        cy.get('#title').type('Go To Statement Considered Harmful')
+        cy.get('#author').type('Edsger W. Dijkstra')
+        cy.get('#url').type('http://www.u.arizona.edu/~rubinson/copyright_violations/Go_To_Considered_Harmful.html')
+        cy.get('#create-button').click()
+
+        cy.contains('Go To Statement Considered Harmful Edsger W. Dijkstra')
+      })
+    })
   })
 })
