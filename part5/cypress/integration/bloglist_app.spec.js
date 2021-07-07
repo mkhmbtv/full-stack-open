@@ -39,7 +39,7 @@ describe('Blog app', function() {
     })
 
     describe('When logged in', function () {
-      beforeEach(function () {
+      beforeEach(function() {
         cy.login({ username: 'root', password: 'testing' })
       })
 
@@ -51,6 +51,37 @@ describe('Blog app', function() {
         cy.get('#create-button').click()
 
         cy.contains('Go To Statement Considered Harmful Edsger W. Dijkstra')
+      })
+
+      describe('And several blogs exist', function() {
+        beforeEach(function() {
+          cy.createBlog({
+            title: 'Go To Statement Considered Harmful',
+            author: 'Edsger W. Dijkstra',
+            url: 'http://www.u.arizona.edu/~rubinson/copyright_violations/Go_To_Considered_Harmful.html'
+          })
+          cy.createBlog({
+            title: 'On let vs const',
+            author: 'Dan Abramov',
+            url: 'http://overreacted.io/on-let-vs-const/'
+          })
+          cy.createBlog({
+            title: 'The Joel Test: 12 Steps to Better Code',
+            author: 'Joel Spolsky',
+            url: 'https://www.joelonsoftware.com/2000/08/09/the-joel-test-12-steps-to-better-code/'
+          })
+        })
+
+        it.only('User can like one of them', function() {
+          cy.contains('On let vs const')
+            .contains('view')
+            .click()
+
+          cy.contains('On let vs const').parent().contains('likes').as('likes')
+          cy.get('@likes').contains('0')
+          cy.get('@likes').find('button').click()
+          cy.get('@likes').contains('1')
+        })
       })
     })
   })
