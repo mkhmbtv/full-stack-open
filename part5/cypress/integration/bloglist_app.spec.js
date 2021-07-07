@@ -12,9 +12,9 @@ describe('Blog app', function() {
 
   it('Login form is shown', function() {
     cy.contains('log in to application')
-    cy.get('#username').should('be.visible')
-    cy.get('#password').should('be.visible')
-    cy.get('#login-button').contains('login')
+    cy.get('#username').should('exist')
+    cy.get('#password').should('exist')
+    cy.get('#login-button').should('exist')
   })
 
   describe('Login', function() {
@@ -95,7 +95,8 @@ describe('Blog app', function() {
           cy.get('html').should('not.contain', 'Go To Statement Considered Harmful Edsger W. Dijkstra')
         })
 
-        it.only('Other users cannot delete a blog', function() {
+        it('Other users cannot delete a blog', function() {
+          cy.contains('logout').click()
           const newUser = {
             username: 'jsmith',
             name: 'James Smith',
@@ -113,6 +114,37 @@ describe('Blog app', function() {
             .contains('sorry, you do not have the right to delete this blog')
 
           cy.get('html').should('contain', 'Go To Statement Considered Harmful Edsger W. Dijkstra')
+        })
+
+        it('Blogs are sorted by likes in descending order', function() {
+          cy.contains('Go To Statement Considered Harmful').parent().as('blog1')
+          cy.contains('On let vs const').parent().as('blog2')
+          cy.contains('The Joel Test: 12 Steps to Better Code Joel Spolsky').parent().as('blog3')
+
+          cy.get('@blog1').contains('view').click()
+          Cypress._.times(3, () => {
+            cy.get('@blog1').contains('like').click()
+            cy.wait(150)
+          })
+
+          cy.get('@blog2').contains('view').click()
+          Cypress._.times(4, () => {
+            cy.get('@blog2').contains('like').click()
+            cy.wait(150)
+          })
+
+          cy.get('@blog3').contains('view').click()
+          Cypress._.times(2, () => {
+            cy.get('@blog3').contains('like').click()
+            cy.wait(150)
+          })
+
+          cy.get('.fullBlog')
+            .then(blogs => {
+              cy.wrap(blogs[0]).should('contain', 'On let vs const').and('contain', 4)
+              cy.wrap(blogs[1]).should('contain', 'Go To Statement Considered Harmful').and('contain', 3)
+              cy.wrap(blogs[2]).should('contain', 'The Joel Test: 12 Steps to Better Code Joel Spolsky').and('contain', 2)
+            })
         })
       })
     })
