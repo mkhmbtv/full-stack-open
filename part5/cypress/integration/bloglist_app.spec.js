@@ -72,7 +72,7 @@ describe('Blog app', function() {
           })
         })
 
-        it.only('User can like one of them', function() {
+        it('User can like one of them', function() {
           cy.contains('On let vs const')
             .contains('view')
             .click()
@@ -81,6 +81,38 @@ describe('Blog app', function() {
           cy.get('@likes').contains('0')
           cy.get('@likes').find('button').click()
           cy.get('@likes').contains('1')
+        })
+
+        it('User who created a blog can delete it', function() {
+          cy.contains('Go To Statement Considered Harmful')
+            .contains('view')
+            .click()
+
+          cy.get('#delete-button').click()
+          cy.get('.success')
+            .contains('Deleted Go To Statement Considered Harmful by Edsger W. Dijkstra')
+
+          cy.get('html').should('not.contain', 'Go To Statement Considered Harmful Edsger W. Dijkstra')
+        })
+
+        it.only('Other users cannot delete a blog', function() {
+          const newUser = {
+            username: 'jsmith',
+            name: 'James Smith',
+            password: 'jspassword'
+          }
+          cy.request('POST', 'http://localhost:3003/api/users', newUser)
+          cy.login({ username: 'jsmith', password: 'jspassword' })
+
+          cy.contains('Go To Statement Considered Harmful')
+            .contains('view')
+            .click()
+
+          cy.get('#delete-button').click()
+          cy.get('.error')
+            .contains('sorry, you do not have the right to delete this blog')
+
+          cy.get('html').should('contain', 'Go To Statement Considered Harmful Edsger W. Dijkstra')
         })
       })
     })
