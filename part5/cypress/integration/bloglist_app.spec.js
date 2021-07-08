@@ -109,11 +109,8 @@ describe('Blog app', function() {
             .contains('view')
             .click()
 
-          cy.get('#delete-button').click()
-          cy.get('.error')
-            .contains('sorry, you do not have the right to delete this blog')
-
-          cy.get('html').should('contain', 'Go To Statement Considered Harmful Edsger W. Dijkstra')
+          cy.contains('Go To Statement Considered Harmful')
+            .should('not.contain', 'remove')
         })
 
         it('Blogs are sorted by likes in descending order', function() {
@@ -124,22 +121,22 @@ describe('Blog app', function() {
           cy.get('@blog1').contains('view').click()
           Cypress._.times(3, () => {
             cy.get('@blog1').contains('like').click()
-            cy.wait(150)
+            cy.wait(200)
           })
 
           cy.get('@blog2').contains('view').click()
           Cypress._.times(4, () => {
             cy.get('@blog2').contains('like').click()
-            cy.wait(150)
+            cy.wait(200)
           })
 
           cy.get('@blog3').contains('view').click()
           Cypress._.times(2, () => {
             cy.get('@blog3').contains('like').click()
-            cy.wait(150)
+            cy.wait(200)
           })
 
-          cy.get('.fullBlog')
+          cy.get('.blog')
             .then(blogs => {
               cy.wrap(blogs[0]).should('contain', 'On let vs const').and('contain', 4)
               cy.wrap(blogs[1]).should('contain', 'Go To Statement Considered Harmful').and('contain', 3)

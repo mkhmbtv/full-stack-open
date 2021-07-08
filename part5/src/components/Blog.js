@@ -1,10 +1,12 @@
 import React, { useState } from 'react'
 
-const Blog = ({ blog, updateBlog, deleteBlog }) => {
+const Blog = ({ blog, updateBlog, deleteBlog, user }) => {
   const [visible, setVisible] = useState(false)
 
-  const hideWhenVisible = { display: visible ? 'none' : '' }
   const showWhenVisible = { display: visible ? '' : 'none' }
+  const hideWhenNotOwn = { display: blog.user.username === user.username ? '' : 'none' }
+
+  const buttonLabel = visible ? 'hide' : 'view'
 
   const toggleVisibility = () => {
     setVisible(!visible)
@@ -34,16 +36,12 @@ const Blog = ({ blog, updateBlog, deleteBlog }) => {
   }
 
   return (
-    <div style={blogStyle}>
-      <div style={hideWhenVisible} className="defaultBlog">
+    <div style={blogStyle} className="blog">
+      <div className="defaultBlog">
         {blog.title} {blog.author}
-        <button onClick={toggleVisibility}>view</button>
+        <button onClick={toggleVisibility}>{buttonLabel}</button>
       </div>
-      <div style={showWhenVisible} className="fullBlog">
-        <div>
-          {blog.title} {blog.author}
-          <button onClick={toggleVisibility}>hide</button>
-        </div>
+      <div style={showWhenVisible}>
         <div>
           {blog.url}
         </div>
@@ -54,7 +52,7 @@ const Blog = ({ blog, updateBlog, deleteBlog }) => {
         <div>
           {blog.user.name}
         </div>
-        <button id="delete-button" onClick={removeBlog}>remove</button>
+        <button style={hideWhenNotOwn} id="delete-button" onClick={removeBlog}>remove</button>
       </div>
     </div>
   )
