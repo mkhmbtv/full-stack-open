@@ -21,10 +21,13 @@ const reducer = (state = [], action) => {
   }
 }
 
-export const createAncedote = (data) => {
-  return {
-    type: 'NEW_ANECDOTE',
-    data
+export const createAncedote = (content) => {
+  return async dispatch => {
+    const newAnecdote = await anecdoteService.createNew(content)
+    dispatch({
+      type: 'NEW_ANECDOTE',
+      data: newAnecdote
+    })
   }
 }
 
