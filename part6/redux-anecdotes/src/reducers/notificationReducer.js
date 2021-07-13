@@ -3,7 +3,7 @@ const notificationReducer = (state = null, action) => {
     case 'SET_NOTIFICATION':
       return action.notification
     case 'CLEAR_NOTIFICATION':
-      return action.notification
+      return null
     default:
       return state
   }
@@ -18,8 +18,7 @@ const showNotification = (notification) => {
 
 const clearNotification = () => {
   return { 
-    type: 'CLEAR_NOTIFICATION',
-    notification: null
+    type: 'CLEAR_NOTIFICATION'
   }
 }
 
