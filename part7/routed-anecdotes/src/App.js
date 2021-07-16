@@ -66,21 +66,27 @@ const Footer = () => (
 )
 
 const CreateNew = (props) => {
-  const content = useField('content')
-  const author = useField('author')
-  const info = useField('info')
+  const { reset: resetContent, ...inputContent } = useField('text')
+  const { reset: resetAuthor, ...inputAuthor } = useField('text')
+  const { reset: resetInfo, ...inputInfo }  = useField('text')
 
   const history = useHistory()
 
   const handleSubmit = (e) => {
     e.preventDefault()
     props.addNew({
-      content: content.value,
-      author: author.value,
-      info: info.value,
+      content: inputContent.value,
+      author: inputAuthor.value,
+      info: inputInfo.value,
       votes: 0
     })
     history.push('/')
+  }
+
+  const clearFields = () => {
+    resetContent()
+    resetAuthor()
+    resetInfo()
   }
   
   return (
@@ -89,17 +95,18 @@ const CreateNew = (props) => {
       <form onSubmit={handleSubmit}>
         <div>
           content
-          <input {...content} />
+          <input {...inputContent} />
         </div>
         <div>
           author
-          <input {...author} />
+          <input {...inputAuthor} />
         </div>
         <div>
           url for more info
-          <input {...info} />
+          <input {...inputInfo} />
         </div>
         <button>create</button>
+        <button type="reset" onClick={clearFields}>reset</button>
       </form>
     </div>
   )
