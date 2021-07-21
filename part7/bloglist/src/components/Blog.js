@@ -1,10 +1,8 @@
 import React, { useState } from 'react'
+import PropTypes from 'prop-types'
 
-const Blog = ({ blog, updateLikes, deleteBlog, user }) => {
+const Blog = ({ blog, updateLikes, deleteBlog, own }) => {
   const [visible, setVisible] = useState(false)
-
-  const showWhenVisible = { display: visible ? '' : 'none' }
-  const hideWhenNotOwn = { display: blog.user.username === user.username ? '' : 'none' }
 
   const buttonLabel = visible ? 'hide' : 'view'
 
@@ -26,21 +24,34 @@ const Blog = ({ blog, updateLikes, deleteBlog, user }) => {
         {blog.title} {blog.author}
         <button onClick={toggleVisibility}>{buttonLabel}</button>
       </div>
-      <div style={showWhenVisible}>
+      {visible && (
         <div>
-          {blog.url}
+          <div>
+            {blog.url}
+          </div>
+          <div>
+            likes {blog.likes}
+            <button onClick={() => updateLikes(blog.id)}>like</button>
+          </div>
+          <div>
+            {blog.user.name}
+          </div>
+          {own && <button id="delete-button" onClick={() => deleteBlog(blog.id)}>remove</button>}
         </div>
-        <div>
-          likes {blog.likes}
-          <button onClick={() => updateLikes(blog.id)}>like</button>
-        </div>
-        <div>
-          {blog.user.name}
-        </div>
-        <button style={hideWhenNotOwn} id="delete-button" onClick={() => deleteBlog(blog.id)}>remove</button>
-      </div>
+      )}
     </div>
   )
+}
+
+Blog.propTypes = {
+  blog: PropTypes.shape({
+    title: PropTypes.string.isRequired,
+    author: PropTypes.string.isRequired,
+    url: PropTypes.string.isRequired,
+  }).isRequired,
+  updateLikes: PropTypes.func.isRequired,
+  deleteBlog: PropTypes.func.isRequired,
+  own: PropTypes.bool.isRequired
 }
 
 export default Blog

@@ -1,15 +1,11 @@
 import axios from 'axios'
+import storage from '../utils/storage'
+
 const baseUrl = '/api/blogs'
-
-let token = null
-
-const setToken = newToken => {
-  token = `bearer ${newToken}`
-}
 
 const getConfig = () => {
   return {
-    headers: { Authorization: token }
+    headers: { Authorization: `bearer ${storage.loadUser().token}` }
   }
 }
 const getAll = () => {
@@ -32,4 +28,4 @@ const remove = async (id) => {
   return response.data
 }
 
-export default { getAll, create, setToken, update, remove }
+export default { getAll, create, update, remove }
