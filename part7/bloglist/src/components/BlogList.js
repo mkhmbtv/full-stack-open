@@ -1,37 +1,24 @@
 import React from 'react'
-import { useDispatch, useSelector } from 'react-redux'
-import { likeBlog, removeBlog } from '../reducers/blogReducer'
-import { setNotification } from '../reducers/notificationReducer'
-import Blog from './Blog'
+import { useSelector } from 'react-redux'
+import { Link } from 'react-router-dom'
 
 const BlogList = () => {
   const blogs = useSelector(state => state.blogs)
-  const user = useSelector(state => state.user)
-  const dispatch = useDispatch()
 
-  const updateLikes = (id) => {
-    const toUpdate = blogs.find(b => b.id === id)
-    dispatch(likeBlog(toUpdate))
+  const blogStyle = {
+    paddingTop: 10,
+    paddingLeft: 2,
+    border: 'solid',
+    borderWidth: 1,
+    marginBottom: 5
   }
 
-  const deleteBlog = (id) => {
-    const toDelete = blogs.find(b => b.id === id)
-    const ok = window.confirm(`Remove blog ${toDelete.title} by ${toDelete.author}?`)
-    if (ok) {
-      dispatch(removeBlog(id))
-      dispatch(setNotification(`Deleted ${toDelete.title} by ${toDelete.author}`, 5))
-    }
-  }
   return (
     <div>
       {blogs.map(blog =>
-        <Blog
-          key={blog.id}
-          blog={blog}
-          updateLikes={updateLikes}
-          deleteBlog={deleteBlog}
-          own={blog.user.username === user.username}
-        />
+        <div key={blog.id} style={blogStyle}>
+          <Link to={`/blogs/${blog.id}`}>{blog.title} {blog.author}</Link>
+        </div>
       )}
     </div>
   )
