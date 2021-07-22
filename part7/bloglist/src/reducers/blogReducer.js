@@ -12,6 +12,10 @@ const reducer = (state = [], action) => {
     const liked = action.data
     return state.map(blog => blog.id === liked.id ? liked : blog).sort(byLikes)
   }
+  case 'COMMENT': {
+    const commented = action.data
+    return state.map(blog => blog.id === commented.id ? commented : blog)
+  }
   case 'DELETE':
     return state.filter(blog => blog.id !== action.data.id)
   default:
@@ -58,6 +62,16 @@ export const removeBlog = (id) => {
       data: {
         id
       }
+    })
+  }
+}
+
+export const commentBlog = (id, comment) => {
+  return async dispatch => {
+    const data = await blogService.createComment(id, comment)
+    dispatch({
+      type: 'COMMENT',
+      data
     })
   }
 }

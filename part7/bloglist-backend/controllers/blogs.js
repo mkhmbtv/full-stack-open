@@ -35,8 +35,10 @@ blogsRouter.post('/', userExtractor, async (request, response) => {
 blogsRouter.post('/:id/comments', async (request, response) => {
   const blog = await Blog.findById(request.params.id)
   blog.comments = blog.comments.concat(request.body.comment)
-  await blog.save()
-  response.status(201).json(blog)
+  const savedBlog = await blog.save()
+  await savedBlog.populate('user', { username: 1, name: 1 }).execPopulate()
+
+  response.status(201).json(savedBlog)
 })
 
 blogsRouter.delete('/:id', userExtractor, async (request, response) => {

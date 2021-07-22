@@ -1,6 +1,6 @@
 import React from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { likeBlog, removeBlog } from '../reducers/blogReducer'
+import { likeBlog, removeBlog, commentBlog } from '../reducers/blogReducer'
 import { setNotification } from '../reducers/notificationReducer'
 import { useHistory } from 'react-router-dom'
 
@@ -22,6 +22,13 @@ const Blog = ({ blog }) => {
     }
   }
 
+  const addComment = (id) => (event) => {
+    event.preventDefault()
+    const comment = event.target.comment.value
+    event.target.comment.value = ''
+    dispatch(commentBlog(id, comment))
+  }
+
   const own = user.username === blog.user.username
 
   return (
@@ -35,9 +42,13 @@ const Blog = ({ blog }) => {
       <div>added by {blog.user.name}</div>
       {own && <button id="delete-button" onClick={handleRemove}>remove</button>}
       <h3>comments</h3>
+      <form onSubmit={addComment(blog.id)}>
+        <input type="text" name="comment" />
+        <button type="submit">add comment</button>
+      </form>
       <ul>
-        {blog.comments.map(comment =>
-          <li key={blog.id}>{comment}</li>
+        {blog.comments.map((comment, idx) =>
+          <li key={idx}>{comment}</li>
         )}
       </ul>
     </div>
