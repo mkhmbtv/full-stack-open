@@ -15,6 +15,7 @@ import { logout } from './reducers/userReducer'
 import {
   Switch,
   Route,
+  Link,
   useRouteMatch
 } from 'react-router-dom'
 
@@ -54,12 +55,24 @@ const App = () => {
     )
   }
 
+  const linkStyle = {
+    padding: 5
+  }
+
+  const navStyle = {
+    background: 'lightgrey',
+    padding: 5
+  }
+
   return (
     <div>
-      <h2>blogs</h2>
       <Notification />
-      <p>{loggedUser.name} logged in</p>
-      <button type="submit" onClick={handleLogout}>logout</button>
+      <div style={navStyle}>
+        <Link style={linkStyle} to="/">blogs</Link>
+        <Link style={linkStyle} to="/users">users</Link>
+        {loggedUser.name} logged in <button type="submit" onClick={handleLogout}>logout</button>
+      </div>
+      <h2>blog app</h2>
       <Switch>
         <Route path="/blogs/:id">
           <Blog blog={blog} />
