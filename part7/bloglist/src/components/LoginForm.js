@@ -1,6 +1,7 @@
 import React from 'react'
 import { useDispatch } from 'react-redux'
 import { loginUser } from '../reducers/userReducer'
+import { Form, Button } from 'react-bootstrap'
 
 const LoginForm = () => {
   const dispatch = useDispatch()
@@ -17,25 +18,25 @@ const LoginForm = () => {
   return (
     <div>
       <h2>log in to application</h2>
-      <form onSubmit={handleLogin}>
-        <div>
-          username
-          <input
+      <Form onSubmit={handleLogin} style={{ width: '18rem' }}>
+        <Form.Group>
+          <Form.Label>username:</Form.Label>
+          <Form.Control
             type="text"
-            name='username'
+            name="username"
             id="username"
           />
-        </div>
-        <div>
-          password
-          <input
+          <Form.Label>password:</Form.Label>
+          <Form.Control
             type="password"
             name='password'
             id="password"
           />
-        </div>
-        <button id="login-button" type="submit">login</button>
-      </form>
+          <Button id="login-button" variant="primary" type="submit">
+            login
+          </Button>
+        </Form.Group>
+      </Form>
     </div>
   )
 }

@@ -1,26 +1,21 @@
 import React from 'react'
 import { useSelector } from 'react-redux'
 import { Link } from 'react-router-dom'
+import { Card, ListGroup } from 'react-bootstrap'
 
 const BlogList = () => {
   const blogs = useSelector(state => state.blogs)
 
-  const blogStyle = {
-    paddingTop: 10,
-    paddingLeft: 2,
-    border: 'solid',
-    borderWidth: 1,
-    marginBottom: 5
-  }
-
   return (
-    <div>
-      {blogs.map(blog =>
-        <div key={blog.id} style={blogStyle}>
-          <Link to={`/blogs/${blog.id}`}>{blog.title} {blog.author}</Link>
-        </div>
-      )}
-    </div>
+    <Card style={{ marginTop: '1rem' }}>
+      <ListGroup>
+        {blogs.map(blog =>
+          <ListGroup.Item key={blog.id}>
+            <Link to={`/blogs/${blog.id}`}>{blog.title} {blog.author}</Link>
+          </ListGroup.Item>
+        )}
+      </ListGroup>
+    </Card>
   )
 }
 

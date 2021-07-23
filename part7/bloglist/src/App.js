@@ -19,6 +19,7 @@ import {
   useRouteMatch
 } from 'react-router-dom'
 
+import { Navbar, Nav, Button } from 'react-bootstrap'
 
 const App = () => {
   const dispatch = useDispatch()
@@ -30,10 +31,6 @@ const App = () => {
     dispatch(initializeBlogs())
     dispatch(initializeUsers())
   }, [dispatch])
-
-  const handleLogout = () => {
-    dispatch(logout())
-  }
 
   const userMatch = useRouteMatch('/users/:id')
   const blogMatch = useRouteMatch('/blogs/:id')
@@ -48,30 +45,38 @@ const App = () => {
 
   if (!loggedUser) {
     return (
-      <div>
+      <div className="container">
         <Notification />
         <LoginForm />
       </div>
     )
   }
 
-  const linkStyle = {
-    padding: 5
-  }
-
-  const navStyle = {
-    background: 'lightgrey',
+  const padding = {
     padding: 5
   }
 
   return (
-    <div>
+    <div className="container">
       <Notification />
-      <div style={navStyle}>
-        <Link style={linkStyle} to="/">blogs</Link>
-        <Link style={linkStyle} to="/users">users</Link>
-        {loggedUser.name} logged in <button type="submit" onClick={handleLogout}>logout</button>
-      </div>
+
+      <Navbar collapseOnSelect expand="lg" bg="dark" variant="dark">
+        <Navbar.Toggle aria-controls="responsive-navbar-nav" />
+        <Navbar.Collapse id="responsive-navbar-nav">
+          <Nav className="container-fluid">
+            <Nav.Link as="span">
+              <Link style={padding} to="/">blogs</Link>
+            </Nav.Link>
+            <Nav.Link as="span">
+              <Link style={padding} to="/users">users</Link>
+            </Nav.Link>
+            <Nav.Link as="span" className="ml-auto">
+              <em>{loggedUser.name} logged in</em> <Button type="submit" variant="light" onClick={() => dispatch(logout())}>logout</Button>
+            </Nav.Link>
+          </Nav>
+        </Navbar.Collapse>
+      </Navbar>
+
       <h2>blog app</h2>
       <Switch>
         <Route path="/blogs/:id">

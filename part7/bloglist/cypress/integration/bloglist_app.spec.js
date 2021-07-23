@@ -83,7 +83,7 @@ describe('Blog app', function() {
           cy.get('@likes').contains('1')
         })
 
-        it.only('User who created a blog can delete it', function() {
+        it('User who created a blog can delete it', function() {
           cy.contains('Go To Statement Considered Harmful')
             .contains('view')
             .click()
