@@ -3,7 +3,7 @@ import { useMutation } from '@apollo/client'
 import { SET_BIRTH_YEAR } from '../queries'
 import Select from 'react-select'
 
-const NewBirthYear = ({ authors }) => {
+const NewBirthYear = ({ authors, setError }) => {
   const [selectedOption, setSelectedOption] = useState(null)
   const [born, setBorn] = useState('')
 
@@ -11,7 +11,11 @@ const NewBirthYear = ({ authors }) => {
     return { value: a.name, label: a.name }
   })
 
-  const [ changeBirthYear ] = useMutation(SET_BIRTH_YEAR)
+  const [ changeBirthYear ] = useMutation(SET_BIRTH_YEAR, {
+    onError: (error) => {
+      setError(error.graphQLErrors[0].message)
+    }
+  })
 
   const submit = (event) => {
     event.preventDefault()
