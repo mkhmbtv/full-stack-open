@@ -1,10 +1,20 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import { ALL_AUTHORS } from '../queries'
 import { useQuery } from '@apollo/client'
 import NewBirthYear from './NewBirthYear'
 
 const Authors = ({ show, setError }) => {
-  const result = useQuery(ALL_AUTHORS)
+  const [authors, setAuthors] = useState([])
+  const result = useQuery(ALL_AUTHORS, {
+    skip: !show,
+    fetchPolicy: "network-only"
+  })
+
+  useEffect(() => {
+    if (result.data) {
+      setAuthors(result.data.allAuthors)
+    }
+  }, [result])
   
   if (!show) {
     return null
@@ -13,9 +23,7 @@ const Authors = ({ show, setError }) => {
   if (result.loading) {
     return <div>loading...</div>
   }
-
-  const authors = result.data.allAuthors
-
+ 
   return (
     <div>
       <h2>authors</h2>

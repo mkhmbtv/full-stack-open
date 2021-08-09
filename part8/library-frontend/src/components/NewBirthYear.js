@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import { useMutation } from '@apollo/client'
-import { SET_BIRTH_YEAR } from '../queries'
+import { SET_BIRTH_YEAR, ALL_AUTHORS } from '../queries'
 import Select from 'react-select'
 
 const NewBirthYear = ({ authors, setError }) => {
@@ -14,6 +14,18 @@ const NewBirthYear = ({ authors, setError }) => {
   const [ changeBirthYear ] = useMutation(SET_BIRTH_YEAR, {
     onError: (error) => {
       setError(error.graphQLErrors[0].message)
+    },
+    update: (store, response) => {
+      const editedAuthor = response.data.editAuthor
+      const dataInStore = store.readQuery({ query: ALL_AUTHORS })
+      store.writeQuery({
+        query: ALL_AUTHORS,
+        data: {
+          allAuthors: dataInStore.allAuthors.map(author => 
+            author.id === editedAuthor.id ? editedAuthor : author
+          )
+        }
+      })
     }
   })
 
